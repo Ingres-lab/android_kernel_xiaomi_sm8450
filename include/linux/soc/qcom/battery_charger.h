@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #ifndef _BATTERY_CHARGER_H
@@ -11,7 +11,9 @@
 
 enum battery_charger_prop {
 	BATTERY_RESISTANCE,
+	USB_CC_ORIENTATION,
 	FLASH_ACTIVE,
+	HAS_DP_PS5169,
 	BATTERY_CHARGER_PROP_MAX,
 };
 

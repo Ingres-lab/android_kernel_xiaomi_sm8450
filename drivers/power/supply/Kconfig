@@ -424,7 +424,7 @@ config BATTERY_TWL4030_MADC
 
 config QTI_BATTERY_CHARGER
 	tristate "QTI Glink battery charger"
-	depends on QTI_PMIC_GLINK
+	depends on QTI_PMIC_GLINK && EXTCON
 	help
 	  Say Y here to enable Qualcomm Technologies, Inc. battery charger
 	  driver which interfaces with the charger firmware running on the
@@ -975,6 +975,90 @@ config CHARGER_QCOM_SMB2
 	  Say Y here to enable the Qualcomm PMIC Charger driver. This
 	  adds support for the SMB2 switch mode battery charger found
 	  in PMI8998 and related PMICs.
+
+config BQ_FG_2S
+	tristate "2s battery fuel gauge support"
+	help
+	  Say Y here to have support for 2s battery fuel gauge.
+
+config MI_WIRELESS
+	tristate "mi wirless config"
+	help
+	  Say Y here to enable mi wireless
+
+config WIRELESS_REVERSE_CLOSE
+        tristate "mi wirless reverse close config"
+        depends on MI_WIRELESS
+        help
+          Say Y here to disable mi wireless reverse function
+
+config MI_PEN_WIRELESS
+	tristate "mi pen wirless config"
+	help
+	  Say Y here to enable mi wireless
+
+config BQ_FUEL_GAUGE
+	tristate "BQ fuel gauge config"
+	help
+	  Say y here to enable Bq fuel gauge
+
+config BQ_CLOUD_AUTHENTICATION
+	tristate "BQ cloud thentication config"
+	help
+	  Say Y here to enable Bq cloud thentication
+
+config DUAL_FUEL_GAUGE
+	tristate "BQ fuel gauge config"
+	help
+	  Say y here to enable Bq fuel gauge
+
+config BQ_FG_UPDATE
+	tristate "BQ fuel gauge config"
+	help
+	  Say y here to enable Bq fuel gauge
+
+config MI_ENABLE_DP
+	tristate "enable or disable displayPort config"
+	help
+	  Say Y here to enable create node to support dp function
+
+config REVERSE_33W
+	tristate "enable or disable reverse 33W config"
+	help
+	  Say Y here to enable create node to support reverse_33W of downshift function
+
+config MI_DTPT
+	tristate "mi dtpt config"
+        help
+          Say Y here to enable mi dtpt
+
+config ANTI_BURN_DETECT
+	tristate "anti burn detect config"
+	help
+	  Say Y or M here to enable anti burn detect config
+
+config MI_WLS_REVERSE_CHG_ONLY
+	tristate "mi only reverse wls chg config"
+        help
+          Say Y here to enable mi only reverse wls chg
+
+config MI_CHARGER_M81
+	tristate "match m81 charger properties"
+	help
+	  Say Y here to enable xiaomi properties similar to
+	  qti_battery_charger_main_m81 module on stock
+
+config MI_FG_MAX_LIFE
+	bool "battery max life statistics properties"
+	help
+	  Say Y here on targets whose charger firmware implements the
+	  max_life_vol, max_life_temp and over_vol_duration properties,
+	  such as marble and zeus.
+
+	  These sit in the middle of enum xm_property_id, whose indices are
+	  the opcodes exchanged with the charger firmware, so enabling them
+	  on a target that lacks them shifts every later property and makes
+	  the fg1_* nodes report the wrong values. If unsure, say N.
 
 source "drivers/power/supply/qcom/Kconfig"
 
