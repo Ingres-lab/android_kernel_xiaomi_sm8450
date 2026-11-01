@@ -1402,3 +1402,4 @@ config TOUCHSCREEN_HIMAX_HX83112B
 endif
 
 source "drivers/input/touchscreen/xiaomi/Kconfig"
+source "drivers/input/touchscreen/fts_spi/Kconfig"

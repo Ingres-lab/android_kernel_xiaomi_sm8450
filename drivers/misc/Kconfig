@@ -607,6 +607,7 @@ source "drivers/misc/mchp_pci1xxxx/Kconfig"
 endmenu
 
 source "drivers/misc/mi_gamekey/Kconfig"
+source "drivers/misc/hwid/Kconfig"
 
 config LDO_WL2866D
 	tristate "WL2866D camera PMIC"
