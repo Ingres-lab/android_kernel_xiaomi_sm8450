@@ -522,4 +522,22 @@ config LOONGSON2_THERMAL
 	  is higher than the high temperature threshold or lower than the low
 	  temperature threshold, the interrupt will occur.
 
+config MI_THERMAL_INTERFACE
+	tristate "xiaomi thermal control interface"
+	depends on THERMAL
+	default n
+	help
+	  This is xiaomi thermal control interface.
+
+config MI_THERMAL_MULTI_CHARGE
+	tristate "enable multi charge themral interface"
+	help
+	  Enable multi charge function in kernel, add two sysfs nodes in
+	  thermal_message.
+
+config HAVE_CHARGE_TEMP
+	tristate "enable have charge temp node in thermal interface"
+	help
+	  Enable display charge temp node in kernel, add one node in thermal_message
+
 endif
