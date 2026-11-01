@@ -264,3 +264,9 @@ config THERMAL_TSENS_LEGACY
 	  thermal userspace client when a threshold is reached. Warm/Cool
 	  temperature thresholds can be set independently for each sensor.
 
+
+config QTI_ADC_TM
+	tristate "Qualcomm Technologies Inc. Thermal Monitor ADC Driver"
+	depends on SPMI && THERMAL && QCOM_SPMI_ADC5
+	help
+	  Thermal sysfs driver for the ADC thermal monitoring device.

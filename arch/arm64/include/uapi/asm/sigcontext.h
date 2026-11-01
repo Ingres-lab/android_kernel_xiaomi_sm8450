@@ -22,6 +22,15 @@
 #include <linux/types.h>
 
 /*
+ * This is an arm64-only header, but the Android build may pull the generated
+ * kernel uapi headers into 32-bit (armv7) modules, where __uint128_t does not
+ * exist. Provide a placeholder so the header still parses there.
+ */
+#ifndef __aarch64__
+typedef struct { unsigned long long __words[2]; } __uint128_t;
+#endif
+
+/*
  * Signal context structure - contains all info to do with the state
  * before the signal handler was invoked.
  */

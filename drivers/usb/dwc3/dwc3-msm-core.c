@@ -6866,6 +6866,37 @@ static void msm_dwc3_perf_vote_enable(struct dwc3_msm *mdwc, bool enable)
 	}
 }
 
+/*
+ * The 5.10 downstream driver switched the UTMI clock source here; the 6.6
+ * forward-port kept the call sites but dropped the helper. The register bits
+ * are already defined above.
+ */
+static void dwc3_msm_switch_utmi(struct dwc3_msm *mdwc, int enable)
+{
+	u32 reg;
+
+	dwc3_msm_write_reg(mdwc->base, QSCRATCH_GENERAL_CFG,
+		dwc3_msm_read_reg(mdwc->base,
+		QSCRATCH_GENERAL_CFG)
+		| PIPE_UTMI_CLK_DIS);
+
+	udelay(5);
+
+	reg = dwc3_msm_read_reg(mdwc->base, QSCRATCH_GENERAL_CFG);
+	if (enable)
+		reg |= (PIPE_UTMI_CLK_SEL | PIPE3_PHYSTATUS_SW);
+	else
+		reg &= ~(PIPE_UTMI_CLK_SEL | PIPE3_PHYSTATUS_SW);
+	dwc3_msm_write_reg(mdwc->base, QSCRATCH_GENERAL_CFG, reg);
+
+	udelay(5);
+
+	dwc3_msm_write_reg(mdwc->base, QSCRATCH_GENERAL_CFG,
+		dwc3_msm_read_reg(mdwc->base,
+		QSCRATCH_GENERAL_CFG)
+		& ~PIPE_UTMI_CLK_DIS);
+}
+
 /**
  * dwc3_otg_start_host -  helper function for starting/stopping the host
  * controller driver.

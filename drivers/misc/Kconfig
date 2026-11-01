@@ -605,3 +605,10 @@ source "drivers/misc/uacce/Kconfig"
 source "drivers/misc/pvpanic/Kconfig"
 source "drivers/misc/mchp_pci1xxxx/Kconfig"
 endmenu
+
+source "drivers/misc/mi_gamekey/Kconfig"
+
+config LDO_WL2866D
+	tristate "WL2866D camera PMIC"
+	help
+	  Regulators and camera power sequencing for the WL2866D PMIC.

@@ -41,7 +41,7 @@
 #include "../core/core.h"
 #include "../core/card.h"
 #include <linux/qtee_shmbridge.h>
-#include <trace/hooks/mmc_core.h>
+#include <trace/hooks/mmc.h>
 
 #define CORE_MCI_VERSION		0x50
 #define CORE_VERSION_MAJOR_SHIFT	28

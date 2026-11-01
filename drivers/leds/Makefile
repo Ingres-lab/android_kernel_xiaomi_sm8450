@@ -117,3 +117,4 @@ obj-y					+= blink/
 
 # Simple LED drivers
 obj-y					+= simple/
+obj-$(CONFIG_LEDS_AW_22XXX)	+= leds-aw22xxx.o

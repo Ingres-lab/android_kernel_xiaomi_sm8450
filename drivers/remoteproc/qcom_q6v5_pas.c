@@ -1460,7 +1460,9 @@ static int adsp_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
-	sysfs_create_file(&pdev->dev.kobj, &dev_attr_crash_reason.attr);
+	ret = sysfs_create_file(&pdev->dev.kobj, &dev_attr_crash_reason.attr);
+	if (ret)
+		dev_err(&pdev->dev, "unable to create crash_reason sysfs entry\n");
 
 	rproc->recovery_disabled = true;
 	rproc->auto_boot = desc->auto_boot;

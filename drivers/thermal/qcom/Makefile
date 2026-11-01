@@ -37,3 +37,5 @@ qti_qmi_sensor-y += thermal_sensor_service_v01.o qmi_sensors.o
 obj-$(CONFIG_THERMAL_TSENS_LEGACY)	+= msm-tsens-driver.o
 msm-tsens-driver-y			+= msm-tsens.o tsens2xxx.o tsens-dbg.o tsens1xxx.o
 obj-$(CONFIG_QTI_THERMAL_LIMITS_DCVS) += msm_lmh_dcvs.o
+obj-$(CONFIG_QTI_ADC_TM) += qti-adc-tm.o
+qti-adc-tm-y += adc-tm.o adc-tm-common.o adc-tm5.o adc-tm7.o

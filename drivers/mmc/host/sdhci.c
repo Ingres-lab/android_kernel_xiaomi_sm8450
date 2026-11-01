@@ -2472,6 +2472,7 @@ static int sdhci_get_cd(struct mmc_host *mmc)
 {
 	struct sdhci_host *host = mmc_priv(mmc);
 	int gpio_cd = mmc_gpio_get_cd(mmc);
+	bool allow = true;
 
 	if (host->flags & SDHCI_DEVICE_DEAD)
 		return 0;
@@ -2490,7 +2491,9 @@ static int sdhci_get_cd(struct mmc_host *mmc)
 	/* If polling, assume that the card is always present. */
 	if (host->quirks & SDHCI_QUIRK_BROKEN_CARD_DETECTION)
 		return 1;
-	trace_android_vh_sdhci_get_cd(host);
+	trace_android_vh_sdhci_get_cd(host, &allow);
+	if (!allow)
+		return 0;
 
 	/* Host native card detect */
 	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);

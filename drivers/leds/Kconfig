@@ -966,3 +966,9 @@ comment "Simple LED drivers"
 source "drivers/leds/simple/Kconfig"
 
 endif # NEW_LEDS
+
+config LEDS_AW_22XXX
+	tristate "LED Support for AW22XXX"
+	depends on LEDS_CLASS && I2C
+	help
+	  Support for the AW22XXX RGB LED connected through I2C.

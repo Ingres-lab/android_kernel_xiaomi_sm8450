@@ -341,6 +341,8 @@ struct mmc_host {
 	u32			max_current_330;
 	u32			max_current_300;
 	u32			max_current_180;
+	/* Qualcomm vendor hook scratch state (5.10 driver compatibility) */
+	unsigned long		android_oem_data1;
 
 #define MMC_VDD_165_195		0x00000080	/* VDD voltage 1.65 - 1.95 */
 #define MMC_VDD_20_21		0x00000100	/* VDD voltage 2.0 ~ 2.1 */

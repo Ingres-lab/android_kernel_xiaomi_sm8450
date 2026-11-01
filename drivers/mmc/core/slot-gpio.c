@@ -31,7 +31,11 @@ static irqreturn_t mmc_gpio_cd_irqt(int irq, void *dev_id)
 	/* Schedule a card detection after a debounce timeout */
 	struct mmc_host *host = dev_id;
 	struct mmc_gpio *ctx = host->slot.handler_priv;
-	trace_android_vh_mmc_gpio_cd_irqt(host);
+	bool allow = true;
+
+	trace_android_vh_mmc_gpio_cd_irqt(host, &allow);
+	if (!allow)
+		return IRQ_HANDLED;
 
 	host->trigger_card_event = true;
 	mmc_detect_change(host, msecs_to_jiffies(ctx->cd_debounce_delay_ms));
