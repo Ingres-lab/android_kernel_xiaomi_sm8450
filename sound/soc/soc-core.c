@@ -46,6 +46,9 @@
 
 static DEFINE_MUTEX(client_mutex);
 static LIST_HEAD(component_list);
+/* drivers/base/base.h; soc-core is built in */
+void driver_deferred_probe_trigger(void);
+
 static LIST_HEAD(unbind_card_list);
 
 #define for_each_component(component)			\
@@ -2742,8 +2745,15 @@ err_cleanup:
 
 	mutex_unlock(&client_mutex);
 
-	if (ret == 0)
+	if (ret == 0) {
 		snd_soc_try_rebind_card();
+		/*
+		 * Vendor codecs (e.g. lpass-cdc) add their component outside
+		 * their own probe, so no driver bind follows to retry a sound
+		 * card that deferred on it. Kick deferred probing here.
+		 */
+		driver_deferred_probe_trigger();
+	}
 
 	return ret;
 }
