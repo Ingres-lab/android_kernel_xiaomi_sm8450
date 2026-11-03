@@ -73,3 +73,4 @@ obj-$(CONFIG_QSEECOM_PROXY) 	+= qseecom_proxy.o
 obj-$(CONFIG_PKVM_SMC_FILTER)  += pkvm-smc/
 obj-$(CONFIG_MI_GAMEKEY)	+= mi_gamekey/
 obj-$(CONFIG_LDO_WL2866D)	+= wl2866d.o
+obj-$(CONFIG_NTSYNC)		+= ntsync.o
