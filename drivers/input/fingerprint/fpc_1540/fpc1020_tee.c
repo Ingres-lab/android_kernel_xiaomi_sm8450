@@ -663,7 +663,8 @@ static int device_prepare(struct fpc1020_data *fpc1020, bool enable)
 			pr_info("Try to enable fp_vdd_vreg\n");
 			vreg = regulator_get(dev, "fp_vdd_vreg");
 
-			if (vreg == NULL) {
+			if (IS_ERR_OR_NULL(vreg)) {
+				vreg = NULL;
 				dev_err(dev,
 					"fp_vdd_vreg regulator get failed!\n");
 				goto exit;
@@ -729,7 +730,9 @@ static int device_prepare(struct fpc1020_data *fpc1020, bool enable)
 		usleep_range(PWR_ON_SLEEP_MIN_US, PWR_ON_SLEEP_MAX_US);
 
 		if (power_cfg == 0) {
-			//disable 3.3V?
+			/* vreg is only set once the 1V8 path powered the sensor up */
+			if (!vreg)
+				goto exit;
 			rc = regulator_disable(vreg);
 			if (rc) {
 				dev_dbg(dev, "fpc vreg disable failed. \n");
