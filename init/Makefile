@@ -31,9 +31,13 @@ preempt-flag-$(CONFIG_PREEMPT_RT)	:= PREEMPT_RT
 build-version = $(or $(KBUILD_BUILD_VERSION), $(build-version-auto))
 build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))
 
+# KBUILD_BUILD_TAG is appended to the version string after a short date,
+# so a tag of up to ~38 chars still fits the 64-char UTS_VERSION.
+uts-timestamp = $(if $(KBUILD_BUILD_TAG),$(shell date -u +%Y-%m-%d) $(KBUILD_BUILD_TAG),$(build-timestamp))
+
 # Maximum length of UTS_VERSION is 64 chars
 filechk_uts_version = \
-	utsver=$$(echo '$(pound)'"$(build-version)" $(smp-flag-y) $(preempt-flag-y) "$(build-timestamp)" | cut -b -64); \
+	utsver=$$(echo '$(pound)'"$(build-version)" $(smp-flag-y) $(preempt-flag-y) "$(uts-timestamp)" | cut -b -64); \
 	echo '$(pound)'define UTS_VERSION \""$${utsver}"\"
 
 #
