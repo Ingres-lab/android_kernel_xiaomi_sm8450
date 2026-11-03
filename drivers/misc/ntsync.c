@@ -19,6 +19,7 @@
 #include <linux/sched/signal.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
+#include <linux/wait.h>
 #include <uapi/linux/ntsync.h>
 
 #define NTSYNC_NAME	"ntsync"
@@ -100,6 +101,29 @@ struct ntsync_q_entry {
 	struct ntsync_obj *obj;
 	__u32 index;
 };
+
+/*
+ * Wake waiters with WF_SYNC: the signaling thread usually blocks right after
+ * (SetEvent + Wait), so the scheduler may place the wakee on the waker's CPU
+ * instead of waking a remote, possibly idle CPU in another cluster.
+ * try_to_wake_up() is not exported, default_wake_function() passes the flags
+ * through. WF_SYNC lives in kernel/sched/sched.h, which modules cannot use.
+ */
+#define NTSYNC_WF_SYNC	0x10
+
+static bool sync_wake = true;
+module_param(sync_wake, bool, 0644);
+MODULE_PARM_DESC(sync_wake, "Wake waiters with the WF_SYNC hint");
+
+static void ntsync_wake_task(struct task_struct *task)
+{
+	wait_queue_entry_t entry = { .private = task };
+
+	if (sync_wake)
+		default_wake_function(&entry, TASK_NORMAL, NTSYNC_WF_SYNC, NULL);
+	else
+		wake_up_process(task);
+}
 
 struct ntsync_q {
 	struct task_struct *task;
@@ -296,7 +320,7 @@ static void try_wake_all(struct ntsync_device *dev, struct ntsync_q *q,
 				break;
 			}
 		}
-		wake_up_process(q->task);
+		ntsync_wake_task(q->task);
 	}
 
 	for (i = 0; i < count; i++) {
@@ -332,7 +356,7 @@ static void try_wake_any_sem(struct ntsync_obj *sem)
 
 		if (atomic_try_cmpxchg(&q->signaled, &signaled, entry->index)) {
 			sem->u.sem.count--;
-			wake_up_process(q->task);
+			ntsync_wake_task(q->task);
 		}
 	}
 }
@@ -359,7 +383,7 @@ static void try_wake_any_mutex(struct ntsync_obj *mutex)
 			mutex->u.mutex.ownerdead = false;
 			mutex->u.mutex.count++;
 			mutex->u.mutex.owner = q->owner;
-			wake_up_process(q->task);
+			ntsync_wake_task(q->task);
 		}
 	}
 }
@@ -381,7 +405,7 @@ static void try_wake_any_event(struct ntsync_obj *event)
 		if (atomic_try_cmpxchg(&q->signaled, &signaled, entry->index)) {
 			if (!event->u.event.manual)
 				event->u.event.signaled = false;
-			wake_up_process(q->task);
+			ntsync_wake_task(q->task);
 		}
 	}
 }
