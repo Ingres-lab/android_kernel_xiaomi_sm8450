@@ -34,6 +34,7 @@ struct gk_button {
 	struct delayed_work dwork;
 	struct xm_gamekey *parent;
 	bool active_low;
+	int state;	/* last reported value after active_low inversion */
 };
 
 static void gk_report(struct gk_button *b)
@@ -44,6 +45,8 @@ static void gk_report(struct gk_button *b)
 
 	if (b->active_low)
 		val = !val;
+
+	b->state = val;
 
 	dev_dbg(b->parent->dev, "[%d] %s = %d | %d\n", b->id, b->name, val, b->active_low);
 
@@ -133,6 +136,45 @@ static struct gpio_desc *gk_get_gpiod(struct device *dev,
 		return gpio_to_desc(gpio);
 	}
 }
+
+/*
+ * hall_left / hall_right: 1 while the trigger is popped up (reported as
+ * KEY_F3 / KEY_F5), 0 while it is retracted (KEY_F4 / KEY_F6). The input
+ * events only carry changes, so userspace reads these for the initial state.
+ */
+static ssize_t gk_hall_show(struct gk_button *b, char *buf)
+{
+	if (!b)
+		return -ENODEV;
+	return sysfs_emit(buf, "%d\n", b->state ? 0 : 1);
+}
+
+static ssize_t hall_left_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct xm_gamekey *ctx = dev_get_drvdata(dev);
+
+	if (!ctx)
+		return -ENODEV;
+	return gk_hall_show(ctx->btn[GK_HALL_L], buf);
+}
+static DEVICE_ATTR_RO(hall_left);
+
+static ssize_t hall_right_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct xm_gamekey *ctx = dev_get_drvdata(dev);
+
+	if (!ctx)
+		return -ENODEV;
+	return gk_hall_show(ctx->btn[GK_HALL_R], buf);
+}
+static DEVICE_ATTR_RO(hall_right);
+
+static struct attribute *gk_attrs[] = {
+	&dev_attr_hall_left.attr,
+	&dev_attr_hall_right.attr,
+	NULL,
+};
+ATTRIBUTE_GROUPS(gk);
 
 static int xm_gamekey_probe(struct platform_device *pdev)
 {
@@ -258,6 +300,7 @@ static struct platform_driver xm_gamekey_driver = {
 	.driver = {
 		.name = "xm_gamekey",
 		.of_match_table = xm_gamekey_of_match,
+		.dev_groups = gk_groups,
 	},
 	.probe  = xm_gamekey_probe,
 	.remove = xm_gamekey_remove,
