@@ -32,8 +32,11 @@ build-version = $(or $(KBUILD_BUILD_VERSION), $(build-version-auto))
 build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))
 
 # KBUILD_BUILD_TAG is appended to the version string after a short date,
-# so a tag of up to ~38 chars still fits the 64-char UTS_VERSION.
-uts-timestamp = $(if $(KBUILD_BUILD_TAG),$(shell date -u +%Y-%m-%d) $(KBUILD_BUILD_TAG),$(build-timestamp))
+# so a tag of up to ~32 chars still fits the 64-char UTS_VERSION.
+# The date must start with an English weekday: Settings (DeviceInfoUtils)
+# parses "uname -v" as "#N ... <Sun..Sat> ..." and shows "Unavailable"
+# otherwise. E.g. "#52 SMP PREEMPT Sat Nov 7 2026 NEO VORTEX SPECIAL OPTIMIZATION".
+uts-timestamp = $(if $(KBUILD_BUILD_TAG),$(shell LC_ALL=C date -u '+%a %b %-d %Y') $(KBUILD_BUILD_TAG),$(build-timestamp))
 
 # Maximum length of UTS_VERSION is 64 chars
 filechk_uts_version = \
