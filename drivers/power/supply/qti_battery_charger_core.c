@@ -1367,7 +1367,12 @@ static int battery_psy_get_prop(struct power_supply *psy,
 			pval->intval = POWER_SUPPLY_STATUS_DISCHARGING;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
-		pval->intval = pst->prop[prop_id] * 1000;
+		/*
+		 * The ingres firmware already reports uAh (CHARGE_FULL is 4558000 for
+		 * the 4700 mAh pack). Xiaomi's "* 1000" made it nAh and overflowed
+		 * intval above ~2147 mAh (~47%), so Android saw a negative charge.
+		 */
+		pval->intval = pst->prop[prop_id];
 		break;
 	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
 		pval->intval = (pst->prop[prop_id] * 60) > 65535 ?
