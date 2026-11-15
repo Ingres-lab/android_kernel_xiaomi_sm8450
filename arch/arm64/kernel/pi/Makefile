@@ -32,3 +32,6 @@ $(obj)/lib-%.o: $(srctree)/lib/%.c FORCE
 
 obj-y		:= kaslr_early.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o
 extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
+
+# Not profile-optimized: special build environment (hypervisor/vDSO/EFI stub/early PI code)
+AUTOFDO_PROFILE := n

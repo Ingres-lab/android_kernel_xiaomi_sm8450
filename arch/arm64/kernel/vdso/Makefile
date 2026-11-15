@@ -78,3 +78,6 @@ include/generated/vdso-offsets.h: $(obj)/vdso.so.dbg FORCE
 # Actual build commands
 quiet_cmd_vdsold_and_vdso_check = LD      $@
       cmd_vdsold_and_vdso_check = $(cmd_ld); $(cmd_vdso_check)
+
+# Not profile-optimized: special build environment (hypervisor/vDSO/EFI stub/early PI code)
+AUTOFDO_PROFILE := n

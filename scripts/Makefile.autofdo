@@ -9,7 +9,12 @@ ifndef CONFIG_DEBUG_INFO
 endif
 
 ifdef CLANG_AUTOFDO_PROFILE
-  CFLAGS_AUTOFDO_CLANG += -fprofile-sample-use=$(CLANG_AUTOFDO_PROFILE)
+  CFLAGS_AUTOFDO_CLANG += -fprofile-sample-use=$(CLANG_AUTOFDO_PROFILE) -ffunction-sections
+  CFLAGS_AUTOFDO_CLANG += -fsplit-machine-functions
+  # Lab knob: stricter "hot" cutoff (share of total samples that counts as hot; compiler default 990000 = 99%)
+  ifdef AFDO_HOT_CUTOFF
+    CFLAGS_AUTOFDO_CLANG += -mllvm -profile-summary-cutoff-hot=$(AFDO_HOT_CUTOFF)
+  endif
 endif
 
 ifdef CONFIG_LTO_CLANG_THIN
@@ -17,6 +22,12 @@ ifdef CONFIG_LTO_CLANG_THIN
     KBUILD_LDFLAGS += --lto-sample-profile=$(CLANG_AUTOFDO_PROFILE)
   endif
   KBUILD_LDFLAGS += --mllvm=-enable-fs-discriminator=true --mllvm=-improved-fs-discriminator=true -plugin-opt=thinlto
+  KBUILD_LDFLAGS += -plugin-opt=-split-machine-functions
+  ifdef CLANG_AUTOFDO_PROFILE
+    ifdef AFDO_HOT_CUTOFF
+      KBUILD_LDFLAGS += --mllvm=-profile-summary-cutoff-hot=$(AFDO_HOT_CUTOFF)
+    endif
+  endif
 endif
 
 export CFLAGS_AUTOFDO_CLANG

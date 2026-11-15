@@ -31,3 +31,6 @@ $(obj)/hyp.lds: $(src)/hyp.lds.S FORCE
 
 include $(srctree)/arch/arm64/kvm/hyp/nvhe/Makefile.nvhe
 obj-y := kvm_nvhe.o
+
+# Not profile-optimized: special build environment (hypervisor/vDSO/EFI stub/early PI code)
+AUTOFDO_PROFILE := n

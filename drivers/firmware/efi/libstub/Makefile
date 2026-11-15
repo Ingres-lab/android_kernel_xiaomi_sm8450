@@ -168,3 +168,6 @@ quiet_cmd_stubcopy = STUBCPY $@
 		/bin/false;						\
 	fi;								\
 	$(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@
+
+# Not profile-optimized: special build environment (hypervisor/vDSO/EFI stub/early PI code)
+AUTOFDO_PROFILE := n

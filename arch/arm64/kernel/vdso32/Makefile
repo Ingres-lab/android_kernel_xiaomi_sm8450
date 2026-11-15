@@ -176,3 +176,6 @@ gen-vdsosym := $(srctree)/$(src)/../vdso/gen_vdso_offsets.sh
 quiet_cmd_vdsosym = VDSOSYM $@
 # The AArch64 nm should be able to read an AArch32 binary
       cmd_vdsosym = $(NM) $< | $(gen-vdsosym) | LC_ALL=C sort > $@
+
+# Not profile-optimized: special build environment (hypervisor/vDSO/EFI stub/early PI code)
+AUTOFDO_PROFILE := n
