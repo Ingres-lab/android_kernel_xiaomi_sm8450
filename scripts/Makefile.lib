@@ -203,10 +203,12 @@ endif
 #
 # Enable AutoFDO build flags except some files or directories we don't want to
 # enable (depends on variables AUTOFDO_PROFILE_obj.o and AUTOFDO_PROFILE).
+# Modules are skipped unless AUTOFDO_MODULES is set (Neo: module functions are in the
+# profile too, see bench/make_module_profile.sh).
 #
 ifeq ($(CONFIG_AUTOFDO_CLANG),y)
 _c_flags += $(if $(patsubst n%,, \
-	$(AUTOFDO_PROFILE_$(target-stem).o)$(AUTOFDO_PROFILE)$(if $(part-of-module),n,y)), \
+	$(AUTOFDO_PROFILE_$(target-stem).o)$(AUTOFDO_PROFILE)$(if $(part-of-module),$(if $(AUTOFDO_MODULES),y,n),y)), \
 	$(CFLAGS_AUTOFDO_CLANG))
 endif
 
