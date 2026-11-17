@@ -620,6 +620,10 @@ struct battery_chg_dev {
 	struct delayed_work		batt_update_work;
 #endif
 	struct delayed_work		panel_notify_register_work;
+#if defined(CONFIG_MI_CHARGER_M81)
+	struct delayed_work		soc_guard_work;
+	int				soc_guard_last;
+#endif
 	struct delayed_work		panel_sec_notify_register_work;
 	/* To track the driver initialization status */
 	bool				initialized;

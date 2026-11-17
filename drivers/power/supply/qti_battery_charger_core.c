@@ -1308,6 +1308,129 @@ static int battery_psy_set_charge_current(struct battery_chg_dev *bcdev,
 	return rc;
 }
 
+#if defined(CONFIG_MI_CHARGER_M81)
+/*
+ * Raw SoC guard (ingres, BQ28Z610 behind the ADSP).
+ *
+ * BATT_CAPACITY is the ADSP's smoothed "UI" level. It is derived from the
+ * gauge's raw relative SoC as ceil(raw * 100 / 95), but the ADSP only moves
+ * it by 1% per evaluation. When the ADSP battery task falls back to its slow
+ * period (one evaluation per 5-8 minutes) the UI level cannot follow a real
+ * discharge: testers saw the phone die of under-voltage while still showing
+ * 36-74%.
+ *
+ * The raw gauge SoC is still readable (the property this firmware answers for
+ * XM_PROP_FG1_CELL1_VOL), so never report more than the raw value supports.
+ * In normal operation the UI level is always <= the limit and this is a no-op.
+ */
+#define SOC_GUARD_RAW_FULL		95
+#define SOC_GUARD_MARGIN		1
+#define SOC_GUARD_EMPTY_TRUST_MV	7400
+#define SOC_GUARD_DEFAULT_OFF_MV	6700
+#define SOC_GUARD_PERIOD_ON_MS		10000
+#define SOC_GUARD_PERIOD_OFF_MS		30000
+
+static bool soc_guard = true;
+module_param(soc_guard, bool, 0644);
+MODULE_PARM_DESC(soc_guard, "Limit the reported battery level to what the raw gauge SoC supports");
+
+static int battery_chg_guard_soc(struct battery_chg_dev *bcdev, int ui_soc)
+{
+	struct psy_state *xm = &bcdev->psy_list[PSY_TYPE_XM];
+	struct psy_state *batt = &bcdev->psy_list[PSY_TYPE_BATTERY];
+	int limit, vbat_mv, off_mv;
+	u32 raw;
+
+	if (!soc_guard || ui_soc <= 0)
+		return ui_soc;
+
+	if (read_property_id(bcdev, xm, XM_PROP_FG1_CELL1_VOL) < 0)
+		return ui_soc;
+
+	raw = xm->prop[XM_PROP_FG1_CELL1_VOL];
+	if (raw > 100)
+		return ui_soc;
+
+	limit = min(100, (int)DIV_ROUND_UP(raw * 100, SOC_GUARD_RAW_FULL)) +
+		SOC_GUARD_MARGIN;
+
+	if (raw == 0) {
+		/*
+		 * A raw 0 is only believed when the pack voltage agrees, so a
+		 * gauge that is not answering yet cannot fake an empty battery.
+		 * Below the shutdown voltage report 0 so Android powers off
+		 * cleanly instead of waiting for the next slow ADSP evaluation.
+		 */
+		if (read_property_id(bcdev, batt, BATT_VOLT_NOW) < 0)
+			return ui_soc;
+
+		vbat_mv = batt->prop[BATT_VOLT_NOW] / 1000;
+		if (vbat_mv > SOC_GUARD_EMPTY_TRUST_MV)
+			return ui_soc;
+
+		off_mv = bcdev->shutdown_volt_mv > 0 ? bcdev->shutdown_volt_mv :
+						       SOC_GUARD_DEFAULT_OFF_MV;
+		if (vbat_mv <= off_mv)
+			limit = 0;
+	}
+
+	if (ui_soc <= limit)
+		return ui_soc;
+
+	pr_info_ratelimited("soc guard: ADSP level %d%% > raw %u%%, reporting %d%%\n",
+			    ui_soc, raw, limit);
+	return limit;
+}
+
+static unsigned long battery_chg_soc_guard_period(void)
+{
+#if defined(CONFIG_DRM_PANEL)
+	if (blank_state & sec_blank_state)
+		return msecs_to_jiffies(SOC_GUARD_PERIOD_OFF_MS);
+#endif
+	return msecs_to_jiffies(SOC_GUARD_PERIOD_ON_MS);
+}
+
+/*
+ * Two jobs:
+ *
+ * 1. Keep-alive poll. Xiaomi's own periodic "batt update" work
+ *    (CONFIG_BQ_FG_UPDATE, not enabled for ingres) does nothing but read
+ *    XM_PROP_THERMAL_TEMP every 10/20 s. Otherwise that read only happens
+ *    when userspace polls the "battery" thermal zone, and tester logs show
+ *    it not being read for 40 minutes at a time. Every session in which a
+ *    logger read it every 10 s kept the fast ADSP evaluation period, so do
+ *    the read here at the vendor's cadence.
+ *
+ * 2. The ADSP only notifies when its own level changes, which is exactly
+ *    what is late in the failing case, so tell userspace when the guarded
+ *    level moves.
+ */
+static void battery_chg_soc_guard_work(struct work_struct *work)
+{
+	struct battery_chg_dev *bcdev = container_of(work, struct battery_chg_dev,
+						     soc_guard_work.work);
+	struct psy_state *pst = &bcdev->psy_list[PSY_TYPE_BATTERY];
+	int soc;
+
+	if (soc_guard)
+		read_property_id(bcdev, &bcdev->psy_list[PSY_TYPE_XM],
+				 XM_PROP_THERMAL_TEMP);
+
+	if (soc_guard && pst->psy &&
+	    read_property_id(bcdev, pst, BATT_CAPACITY) >= 0) {
+		soc = battery_chg_guard_soc(bcdev, pst->prop[BATT_CAPACITY] / 100);
+		if (bcdev->soc_guard_last >= 0 && soc != bcdev->soc_guard_last)
+			power_supply_changed(pst->psy);
+		bcdev->soc_guard_last = soc;
+	}
+
+	queue_delayed_work(system_freezable_power_efficient_wq,
+			   &bcdev->soc_guard_work,
+			   battery_chg_soc_guard_period());
+}
+#endif /* CONFIG_MI_CHARGER_M81 */
+
 static int battery_psy_get_prop(struct power_supply *psy,
 		enum power_supply_property prop,
 		union power_supply_propval *pval)
@@ -1342,6 +1465,9 @@ static int battery_psy_get_prop(struct power_supply *psy,
 		pval->intval = pst->prop[prop_id] / 100;
 #else
 		pval->intval = DIV_ROUND_CLOSEST(pst->prop[prop_id], 100);
+#endif
+#if defined(CONFIG_MI_CHARGER_M81)
+		pval->intval = battery_chg_guard_soc(bcdev, pval->intval);
 #endif
 		if (bcdev->fake_soc >= 0 && bcdev->fake_soc <= 100)
 			pval->intval = bcdev->fake_soc;
@@ -2942,6 +3068,13 @@ static int battery_chg_probe(struct platform_device *pdev)
 #if defined(CONFIG_BQ_FG_UPDATE)
 	schedule_delayed_work(&bcdev->batt_update_work, 0);
 #endif
+#if defined(CONFIG_MI_CHARGER_M81)
+	bcdev->soc_guard_last = -EINVAL;
+	INIT_DELAYED_WORK(&bcdev->soc_guard_work, battery_chg_soc_guard_work);
+	queue_delayed_work(system_freezable_power_efficient_wq,
+			   &bcdev->soc_guard_work,
+			   battery_chg_soc_guard_period());
+#endif
 
 #ifndef CONFIG_MI_CHARGER_M81
 	bcdev->chg_nb.notifier_call = charger_notifier_event;
@@ -2978,6 +3111,9 @@ static int battery_chg_remove(struct platform_device *pdev)
 	bcdev->initialized = false;
 	up_write(&bcdev->state_sem);
 
+#if defined(CONFIG_MI_CHARGER_M81)
+	cancel_delayed_work_sync(&bcdev->soc_guard_work);
+#endif
 	qti_typec_class_deinit(bcdev->typec_class);
 	if (bcdev->notifier_cookie)
 		panel_event_notifier_unregister(bcdev->notifier_cookie);
