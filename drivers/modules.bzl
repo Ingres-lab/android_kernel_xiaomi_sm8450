@@ -1,3 +1,4 @@
+load(":drivers/neo_usb_extras.bzl", register_neo_usb_extras = "register_modules")
 load(":drivers/base/regmap/modules.bzl", register_base_regmap = "register_modules")
 load(":drivers/block/modules.bzl", register_block = "register_modules")
 load(":drivers/bus/modules.bzl", register_bus = "register_modules")
@@ -68,6 +69,7 @@ load(":drivers/virt/modules.bzl", register_virt = "register_modules")
 load(":drivers/virtio/modules.bzl", register_virtio = "register_modules")
 
 def register_modules(registry):
+    register_neo_usb_extras(registry)
     register_base_regmap(registry)
     register_block(registry)
     register_bus(registry)
