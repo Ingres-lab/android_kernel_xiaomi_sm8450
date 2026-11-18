@@ -2,8 +2,29 @@ load(":soc_repo_path.bzl", "SOC_MODULES_REPO_PATH")
 load("@rules_pkg//pkg:install.bzl", "pkg_install")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
+# Targets whose techpacks are brought up one subsystem at a time: only the listed
+# subsystems (directory under qcom/opensource or nxp/opensource, e.g. "graphics-kernel",
+# "wlan/platform") are built. Targets not listed here build every techpack.
+_TECHPACK_ALLOWLIST = {
+    # ingres (POCO F4 GT) on 6.12: first boot with core modules only
+    "waipio": [],
+}
+
+def _allowed(label, allow):
+    for subsystem in allow:
+        if "/opensource/{}:".format(subsystem) in label or "/opensource/{}/".format(subsystem) in label:
+            return True
+    return False
+
 def define_techpack_modules(target, msm_target, variant):
-    techpack_targets = [
+    techpack_targets = _all_techpack_targets(target)
+    allow = _TECHPACK_ALLOWLIST.get(msm_target)
+    if allow != None:
+        techpack_targets = [t for t in techpack_targets if _allowed(t, allow)]
+    return _define_dist(target, techpack_targets)
+
+def _all_techpack_targets(target):
+    return [
         "//{}/qcom/opensource/fingerprint:{}_qbt_handler".format(SOC_MODULES_REPO_PATH, target),
         "//{}/qcom/opensource/bt-kernel:{}_btpower".format(SOC_MODULES_REPO_PATH, target),
         "//{}/qcom/opensource/bt-kernel:{}_radio-i2c-rtc6226-qca".format(SOC_MODULES_REPO_PATH, target),
@@ -68,6 +89,7 @@ def define_techpack_modules(target, msm_target, variant):
         "//{}/nxp/opensource/driver:{}_nxp-nci".format(SOC_MODULES_REPO_PATH, target),
     ]
 
+def _define_dist(target, techpack_targets):
     # 1. Define how files are packaged (permissions + flattening)
     pkg_files(
         name = "{}_all_vendor_module_dist_files".format(target),
