@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+config IR_SPI_XIAOMI
+	tristate "SPI connected IR LED, Xiaomi buffer size"
+	depends on SPI && LIRC && OF
+	help
+	  The upstream ir-spi driver (IR blaster LED on SPI) built as a vendor
+	  module with a 32 KiB transmit buffer: the 4 KiB upstream limit is too
+	  small for the IR codes Xiaomi's remote app sends. GKI does not build
+	  ir-spi, so ingres ships this copy instead.

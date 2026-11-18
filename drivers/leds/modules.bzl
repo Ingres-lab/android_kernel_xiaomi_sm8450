@@ -152,3 +152,14 @@ def register_modules(registry):
             # do not sort
         ],
     )
+
+    # ingres: Awinic AW22xxx rear RGB lights
+    registry.register(
+        name = "drivers/leds/leds-aw22xxx",
+        out = "leds-aw22xxx.ko",
+        config = "CONFIG_LEDS_AW_22XXX",
+        srcs = [
+            # do not sort
+            "drivers/leds/leds-aw22xxx.c",
+        ],
+    )

@@ -11,3 +11,7 @@ config TOUCHSCREEN_CAP1296
           tive touch sensor inputs with programmable sensitivity
           for use in touch sensor applications.
 
+
+# Xiaomi touch feature framework and ST FTS v5.2.1 SPI touch (ingres)
+source "$(KCONFIG_EXT_PREFIX)drivers/input/touchscreen/xiaomi/Kconfig"
+source "$(KCONFIG_EXT_PREFIX)drivers/input/touchscreen/fts_spi/Kconfig"

@@ -39,4 +39,13 @@ config INPUT_QCOM_HV_HAPTICS
 	  for playing different vibration effects. To compile this driver as a module,
 	  choose M here: the module will be called qcom-hv-haptics.
 
+config INPUT_XM_GAMEKEY
+	tristate "Xiaomi game key buttons support"
+	depends on INPUT && REGULATOR
+	help
+	  Shoulder trigger buttons (game keys) on Xiaomi gaming phones
+	  (POCO F4 GT / Redmi K50 Gaming).
+
+source "$(KCONFIG_EXT_PREFIX)drivers/input/misc/aw86927_haptic/Kconfig"
+
 endif

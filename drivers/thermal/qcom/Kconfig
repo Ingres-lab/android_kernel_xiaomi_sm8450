@@ -299,3 +299,18 @@ config QTI_AOP_REG_COOLING_DEVICE
 	  device will be used by QTI chipset to place a floor voltage
 	  restriction at low temperatures. The cooling device will message
 	  the AOP using mail box to establish the floor voltage.
+
+config MI_THERMAL_INTERFACE
+	tristate "xiaomi thermal control interface"
+	depends on THERMAL
+	help
+	  Xiaomi thermal control interface (thermal_message sysfs: board
+	  sensor, screen state, charger limits) used by the stock thermal
+	  engine and Neo's thermal configs on ingres.
+
+config MI_THERMAL_MULTI_CHARGE
+	bool "enable multi charge thermal interface"
+	depends on MI_THERMAL_INTERFACE
+	help
+	  Enable multi charge function in kernel, add two sysfs nodes in
+	  thermal_message.

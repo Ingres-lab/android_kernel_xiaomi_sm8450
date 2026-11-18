@@ -68,3 +68,26 @@ def register_modules(registry):
             "drivers/misc/slg4dc.c",
         ],
     )
+
+    # ingres: Xiaomi hardware revision lookup (get_hw_version_platform etc.)
+    registry.register(
+        name = "drivers/misc/hwid/hwid",
+        out = "hwid.ko",
+        config = "CONFIG_MI_HARDWARE_ID",
+        srcs = [
+            # do not sort
+            "drivers/misc/hwid/hwid.c",
+            "drivers/misc/hwid/hwid.h",
+        ],
+    )
+
+    # ingres: WL2866D camera PMIC
+    registry.register(
+        name = "drivers/misc/wl2866d",
+        out = "wl2866d.ko",
+        config = "CONFIG_LDO_WL2866D",
+        srcs = [
+            # do not sort
+            "drivers/misc/wl2866d.c",
+        ],
+    )

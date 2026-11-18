@@ -50,6 +50,10 @@ source "$(KCONFIG_EXT_PREFIX)drivers/iio/dac/Kconfig"
 
 source "$(KCONFIG_EXT_PREFIX)drivers/input/misc/Kconfig"
 
+source "$(KCONFIG_EXT_PREFIX)drivers/input/fingerprint/Kconfig"
+
+source "$(KCONFIG_EXT_PREFIX)drivers/media/rc/Kconfig"
+
 source "$(KCONFIG_EXT_PREFIX)drivers/input/touchscreen/Kconfig"
 
 source "$(KCONFIG_EXT_PREFIX)drivers/interconnect/Kconfig"

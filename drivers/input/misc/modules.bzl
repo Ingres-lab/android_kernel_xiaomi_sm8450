@@ -44,3 +44,33 @@ def register_modules(registry):
             "arch/arm64/gunyah/gh_arm_drv",
         ],
     )
+
+    # ingres: shoulder trigger buttons (game keys)
+    registry.register(
+        name = "drivers/input/misc/xm_gamekey",
+        out = "xm_gamekey.ko",
+        config = "CONFIG_INPUT_XM_GAMEKEY",
+        srcs = [
+            # do not sort
+            "drivers/input/misc/xm_gamekey.c",
+        ],
+    )
+
+    # ingres: Awinic AW86927 haptic driver (also handles AW8697), used by the Neo vibrator HAL
+    registry.register(
+        name = "drivers/input/misc/aw86927_haptic/aw8697-haptic",
+        out = "aw8697-haptic.ko",
+        config = "CONFIG_INPUT_AW86927_HAPTIC",
+        srcs = [
+            # do not sort
+            "drivers/input/misc/aw86927_haptic/aw_haptic.c",
+            "drivers/input/misc/aw86927_haptic/ringbuffer.c",
+            "drivers/input/misc/aw86927_haptic/aw86927.c",
+            "drivers/input/misc/aw86927_haptic/aw8697.c",
+            "drivers/input/misc/aw86927_haptic/aw86927.h",
+            "drivers/input/misc/aw86927_haptic/aw8697.h",
+            "drivers/input/misc/aw86927_haptic/aw_config.h",
+            "drivers/input/misc/aw86927_haptic/aw_haptic.h",
+            "drivers/input/misc/aw86927_haptic/ringbuffer.h",
+        ],
+    )

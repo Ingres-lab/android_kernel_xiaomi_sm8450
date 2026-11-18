@@ -416,3 +416,18 @@ def register_modules(registry):
             "drivers/thermal/qcom/regulator_aop_cdev.c",
         ],
     )
+
+    # ingres: Xiaomi thermal control interface (thermal_message)
+    registry.register(
+        name = "drivers/thermal/qcom/mi_thermal_interface",
+        out = "mi_thermal_interface.ko",
+        config = "CONFIG_MI_THERMAL_INTERFACE",
+        srcs = [
+            # do not sort
+            "drivers/thermal/qcom/mi_thermal_interface.c",
+        ],
+        deps = [
+            # do not sort
+            "drivers/soc/qcom/panel_event_notifier",
+        ],
+    )

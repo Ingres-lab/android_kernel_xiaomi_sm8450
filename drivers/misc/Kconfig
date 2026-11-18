@@ -102,4 +102,13 @@ config SLG4DC_SIGNAL_IC
 	  power device using I2C.
 
 	  Say Y if you want to enable SLG4DC driver.
+
+source "$(KCONFIG_EXT_PREFIX)drivers/misc/hwid/Kconfig"
+
+config LDO_WL2866D
+	tristate "WL2866D camera PMIC"
+	depends on I2C && REGULATOR
+	help
+	  Regulators and camera power sequencing for the WL2866D PMIC.
+
 endmenu

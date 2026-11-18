@@ -9,12 +9,26 @@ def register_modules(registry):
         config = "CONFIG_QTI_BATTERY_CHARGER",
         srcs = [
             # do not sort
-            "drivers/power/supply/qti_battery_charger.c",
-            "drivers/power/supply/qti_charger_boost_lib.c",
-            "drivers/power/supply/qti_charger_boost_lib.h",
             "drivers/power/supply/qti_typec_class.c",
             "drivers/power/supply/qti_typec_class.h",
         ],
+        conditional_srcs = {
+            # Xiaomi charger (stock qti_battery_charger_main_m81 properties) on ingres
+            "CONFIG_MI_CHARGER_M81": {
+                True: [
+                    # do not sort
+                    "drivers/power/supply/qti_battery_charger_core.c",
+                    "drivers/power/supply/qti_battery_charger_xiaomi.c",
+                    "drivers/power/supply/qti_battery_charger.h",
+                ],
+                False: [
+                    # do not sort
+                    "drivers/power/supply/qti_battery_charger.c",
+                    "drivers/power/supply/qti_charger_boost_lib.c",
+                    "drivers/power/supply/qti_charger_boost_lib.h",
+                ],
+            },
+        },
         deps = [
             # do not sort
             "drivers/soc/qcom/panel_event_notifier",
