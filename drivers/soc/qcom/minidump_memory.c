@@ -37,10 +37,10 @@ static struct seq_buf *md_meminfo_seq_buf;
 static struct seq_buf *md_slabinfo_seq_buf;
 
 static size_t md_pageowner_dump_size = SZ_2M;
-static char *md_pageowner_dump_addr;
+static __maybe_unused char *md_pageowner_dump_addr;
 
 static size_t md_slabowner_dump_size = SZ_2M;
-static char *md_slabowner_dump_addr;
+static __maybe_unused char *md_slabowner_dump_addr;
 
 static size_t md_dma_buf_info_size = SZ_256K;
 static char *md_dma_buf_info_addr;
@@ -52,12 +52,12 @@ static size_t md_task_memstat_size = SZ_256K;
 static char *md_task_memstat_addr;
 
 static unsigned long *md_debug_totalcma_pages;
-static struct list_head *md_debug_slab_caches;
-static struct mutex *md_debug_slab_mutex;
+static __maybe_unused struct list_head *md_debug_slab_caches;
+static __maybe_unused struct mutex *md_debug_slab_mutex;
 static struct static_key *md_debug_page_owner_inited;
 static struct static_key *md_debug_slub_debug_enabled;
-static unsigned long *md_debug_min_low_pfn;
-static unsigned long *md_debug_max_pfn;
+static __maybe_unused unsigned long *md_debug_min_low_pfn;
+static __maybe_unused unsigned long *md_debug_max_pfn;
 
 #define DMA_BUF_HASH_SIZE (1 << 20)
 #define DMA_BUF_HASH_SEED 0x9747b28c
@@ -278,7 +278,7 @@ static void md_dump_slabinfo(struct seq_buf *m)
 	mutex_unlock(md_debug_slab_mutex);
 }
 #else
-static inline void md_dump_slabinfo(void) {}
+static inline void md_dump_slabinfo(struct seq_buf *m) {}
 #endif /* CONFIG_SLUB_DEBUG */
 
 bool md_register_memory_dump(int size, char *name)
@@ -822,7 +822,7 @@ static inline bool is_page_owner_enabled(void)
 	return false;
 }
 static inline void md_debugfs_pageowner(struct dentry *minidump_dir) {}
-static inline void md_dump_pageowner(char *addr, size_t dump_size);
+static inline void md_dump_pageowner(char *addr, size_t dump_size) {}
 #endif /* CONFIG_PAGE_OWNER */
 
 #ifdef CONFIG_SLUB_DEBUG
@@ -1465,13 +1465,17 @@ void md_dump_memory(void)
 	if (md_slabinfo_seq_buf)
 		md_dump_slabinfo(md_slabinfo_seq_buf);
 
+#ifdef CONFIG_PAGE_OWNER
 	if (md_pageowner_dump_addr)
 		md_dump_pageowner(md_pageowner_dump_addr,
 				  md_pageowner_dump_size - page_owner_handles_size);
+#endif
 
+#ifdef CONFIG_SLUB_DEBUG
 	if (md_slabowner_dump_addr)
 		md_dump_slabowner(md_slabowner_dump_addr,
 				  md_slabowner_dump_size - slab_owner_handles_size);
+#endif
 
 	if (md_dma_buf_info_addr)
 		md_dma_buf_info(md_dma_buf_info_addr, md_dma_buf_info_size);

@@ -225,6 +225,7 @@ filegroup(
         "//common:drivers/android/binder_trace.h",
         "//common:drivers/android/dbitmap.h",
         "//common:drivers/android/debug_kinfo.h",
+        "//common:drivers/base/base.h",
         "//common:drivers/base/regmap/internal.h",
         "//common:drivers/clk/clk.h",
         "//common:drivers/devfreq/governor.h",

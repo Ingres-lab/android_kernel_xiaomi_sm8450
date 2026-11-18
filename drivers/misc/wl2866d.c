@@ -6,7 +6,7 @@
 #include <misc/wl2866d.h>
 #include <linux/slab.h>
 #include <linux/delay.h>
-#include <asm/unaligned.h>
+#include <linux/unaligned.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
 #include <linux/gpio.h>

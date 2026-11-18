@@ -568,7 +568,7 @@ static ssize_t verify_digest_store(const struct class *c,
 
 	if (bcdev->support_2s_charging) {
 		memset(kbuf_2s, 0, sizeof(kbuf_2s));
-		strlcpy(kbuf_2s, buf, 2 * BATTERY_DIGEST_LEN + 1);
+		strscpy(kbuf_2s, buf, 2 * BATTERY_DIGEST_LEN + 1);
 		StringToHex(kbuf_2s, random_2s, &i);
 		rc = write_verify_digest_prop_id(bcdev, &bcdev->psy_list[PSY_TYPE_XM],
 				XM_PROP_VERIFY_DIGEST, random_2s);

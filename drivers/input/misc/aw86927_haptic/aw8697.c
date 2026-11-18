@@ -13,6 +13,7 @@
  * option) any later version.
  */
 #include <linux/module.h>
+#include <linux/vmalloc.h>
 #include <linux/kernel.h>
 #include <linux/i2c.h>
 #include <linux/of_gpio.h>

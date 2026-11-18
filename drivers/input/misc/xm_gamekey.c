@@ -272,7 +272,7 @@ disable_vreg:
 	return ret;
 }
 
-static int xm_gamekey_remove(struct platform_device *pdev)
+static void xm_gamekey_remove(struct platform_device *pdev)
 {
 	int i;
 	struct xm_gamekey *ctx = platform_get_drvdata(pdev);
@@ -286,8 +286,6 @@ static int xm_gamekey_remove(struct platform_device *pdev)
 
 	if (!IS_ERR_OR_NULL(ctx->vdd))
 		regulator_disable(ctx->vdd);
-
-	return 0;
 }
 
 static const struct of_device_id xm_gamekey_of_match[] = {

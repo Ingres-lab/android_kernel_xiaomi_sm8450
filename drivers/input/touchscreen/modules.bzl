@@ -45,6 +45,7 @@ def register_modules(registry):
             "drivers/input/touchscreen/fts_spi/fts_lib/ftsFlash.c",
             "drivers/input/touchscreen/fts_spi/fts_lib/ftsGesture.c",
             "drivers/input/touchscreen/fts_spi/fts.h",
+            "drivers/input/touchscreen/xiaomi/xiaomi_touch.h",
             "drivers/input/touchscreen/fts_spi/fts_fw.h",
             "drivers/input/touchscreen/fts_spi/fts_limits.h",
             "drivers/input/touchscreen/fts_spi/fts_lib/ftsCompensation.h",

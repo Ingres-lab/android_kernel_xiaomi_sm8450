@@ -309,8 +309,8 @@ static ssize_t fts_driver_test_read(struct file *file, char __user *buf,
 	if (*pos == 0) {
 		if (driver_test_buff == NULL) {
 			driver_test_buff =
-				(u8 *)kmalloc(13 * sizeof(u8), GFP_KERNEL);
-			cnt = snprintf(driver_test_buff, 13,
+				(u8 *)kmalloc(14 * sizeof(u8), GFP_KERNEL);
+			cnt = snprintf(driver_test_buff, 14,
 				       "{ %08X }\n", ERROR_OP_NOT_ALLOW);
 			if (copy_to_user(buf, driver_test_buff, cnt))
 				return -EFAULT;
