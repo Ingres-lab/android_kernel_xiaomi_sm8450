@@ -81,3 +81,19 @@ def register_modules(registry):
             "drivers/hwtracing/stm/stm_core",
         ],
     )
+
+    # ingres: upstream STM basic protocol, loaded on 6.6
+    registry.register(
+        name = "drivers/hwtracing/stm/stm_p_basic",
+        out = "stm_p_basic.ko",
+        config = "CONFIG_STM_PROTO_BASIC",
+        srcs = [
+            # do not sort
+            "drivers/hwtracing/stm/p_basic.c",
+            "drivers/hwtracing/stm/stm.h",
+        ],
+        deps = [
+            # do not sort
+            "drivers/hwtracing/stm/stm_core",
+        ],
+    )

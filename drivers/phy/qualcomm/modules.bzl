@@ -344,3 +344,20 @@ def register_modules(registry):
             "drivers/phy/qualcomm/phy-qcom-ufs",
         ],
     )
+
+    # ingres: Cape UFS PHY from the 6.6 tree, loaded on 6.6
+    registry.register(
+        name = "drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-cape",
+        out = "phy-qcom-ufs-qmp-v4-cape.ko",
+        config = "CONFIG_PHY_QCOM_UFS_V4_CAPE",
+        srcs = [
+            # do not sort
+            "drivers/phy/qualcomm/phy-qcom-ufs-i.h",
+            "drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-cape.c",
+            "drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-cape.h",
+        ],
+        deps = [
+            # do not sort
+            "drivers/phy/qualcomm/phy-qcom-ufs",
+        ],
+    )

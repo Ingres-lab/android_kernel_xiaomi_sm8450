@@ -74,3 +74,14 @@ def register_modules(registry):
             "drivers/soc/qcom/panel_event_notifier",
         ],
     )
+
+    # ingres: upstream Atmel maXTouch driver, loaded on 6.6
+    registry.register(
+        name = "drivers/input/touchscreen/atmel_mxt_ts",
+        out = "atmel_mxt_ts.ko",
+        config = "CONFIG_TOUCHSCREEN_ATMEL_MXT",
+        srcs = [
+            # do not sort
+            "drivers/input/touchscreen/atmel_mxt_ts.c",
+        ],
+    )

@@ -2021,3 +2021,18 @@ def register_modules(registry):
             "drivers/usb/gadget/function/usb_f_qdss",
         ],
     )
+
+    # ingres: USB BAM from the 6.6 tree, loaded on 6.6
+    registry.register(
+        name = "drivers/soc/qcom/usb_bam",
+        out = "usb_bam.ko",
+        config = "CONFIG_USB_BAM",
+        srcs = [
+            # do not sort
+            "drivers/soc/qcom/usb_bam.c",
+        ],
+        deps = [
+            # do not sort
+            "drivers/soc/qcom/sps/sps_drv",
+        ],
+    )

@@ -92,6 +92,12 @@ config PHY_QCOM_UFS_V4_LAHAINA
 	  This is required to enable UFS on Lahaina chipset.
 	  To compile this driver as a module, choose M here.
 
+config PHY_QCOM_UFS_V4_CAPE
+	tristate "Qualcomm Technologies, Inc. UFS V4 CAPE"
+	depends on PHY_QCOM_UFS
+	help
+	  Support for the UFS PHY present on QCOM Cape chipsets.
+
 config PHY_QCOM_UFS_V4_WAIPIO
 	tristate "Qualcomm Technologies, Inc. UFS Waipio Phy Driver"
 	depends on PHY_QCOM_UFS
