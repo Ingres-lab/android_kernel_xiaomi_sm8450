@@ -22,6 +22,8 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/securemsm-kernel:qrng_dlkm",
     "qcom/opensource/securemsm-kernel:qcrypto-msm_dlkm",
     "qcom/opensource/securemsm-kernel:tmecom-intf_dlkm",
+    "qcom/opensource/bt-kernel:btpower",
+    "qcom/opensource/bt-kernel:bt_fm_slim",
 ]
 
 def define_techpack_modules(target, msm_target, variant):
