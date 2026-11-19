@@ -13,6 +13,15 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/mm-drivers/msm_ext_display:msm_ext_display",
     "qcom/opensource/synx-kernel/waipio:modules",
     "qcom/opensource/dsp-kernel/waipio:modules",
+    "qcom/opensource/securemsm-kernel:smcinvoke_dlkm",
+    "qcom/opensource/securemsm-kernel:tz_log_dlkm",
+    "qcom/opensource/securemsm-kernel:qseecom_dlkm",
+    "qcom/opensource/securemsm-kernel:hdcp_qseecom_dlkm",
+    "qcom/opensource/securemsm-kernel:qce50_dlkm",
+    "qcom/opensource/securemsm-kernel:qcedev-mod_dlkm",
+    "qcom/opensource/securemsm-kernel:qrng_dlkm",
+    "qcom/opensource/securemsm-kernel:qcrypto-msm_dlkm",
+    "qcom/opensource/securemsm-kernel:tmecom-intf_dlkm",
 ]
 
 def define_techpack_modules(target, msm_target, variant):
