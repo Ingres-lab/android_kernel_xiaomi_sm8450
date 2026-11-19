@@ -12,6 +12,7 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/mmrm-driver:mmrm_driver",
     "qcom/opensource/mm-drivers/msm_ext_display:msm_ext_display",
     "qcom/opensource/synx-kernel/waipio:modules",
+    "qcom/opensource/dsp-kernel/waipio:modules",
 ]
 
 def define_techpack_modules(target, msm_target, variant):
