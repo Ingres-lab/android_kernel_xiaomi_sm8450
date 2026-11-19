@@ -15,6 +15,8 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/graphics-kernel:msm_kgsl",
     "qcom/opensource/audio-kernel/waipio:modules",
     "qcom/opensource/video-driver/waipio:video_modules",
+    "qcom/opensource/camera-kernel/waipio:camera",
+    "qcom/opensource/eva-kernel/waipio:eva_modules",
     "qcom/opensource/synx-kernel/waipio:modules",
     "qcom/opensource/dsp-kernel/waipio:modules",
     "qcom/opensource/securemsm-kernel:smcinvoke_dlkm",
