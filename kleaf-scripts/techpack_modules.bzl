@@ -11,6 +11,7 @@ _WAIPIO_TECHPACKS = [
     "rtl8812au:88XXau",
     "qcom/opensource/mmrm-driver:mmrm_driver",
     "qcom/opensource/mm-drivers/msm_ext_display:msm_ext_display",
+    "qcom/opensource/display-drivers:msm_drm",
     "qcom/opensource/synx-kernel/waipio:modules",
     "qcom/opensource/dsp-kernel/waipio:modules",
     "qcom/opensource/securemsm-kernel:smcinvoke_dlkm",
