@@ -24,6 +24,19 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/securemsm-kernel:tmecom-intf_dlkm",
     "qcom/opensource/bt-kernel:btpower",
     "qcom/opensource/bt-kernel:bt_fm_slim",
+    "qcom/opensource/datarmnet:rmnet_ctl",
+    "qcom/opensource/datarmnet:rmnet_core",
+    "qcom/opensource/datarmnet-ext/aps:aps",
+    "qcom/opensource/datarmnet-ext/offload:offload",
+    "qcom/opensource/datarmnet-ext/perf:perf",
+    "qcom/opensource/datarmnet-ext/perf_tether:perf_tether",
+    "qcom/opensource/datarmnet-ext/mem:rmnet_mem",
+    "qcom/opensource/datarmnet-ext/sch:sch",
+    "qcom/opensource/datarmnet-ext/shs:shs",
+    "qcom/opensource/datarmnet-ext/wlan:wlan",
+    "qcom/opensource/dataipa:gsim",
+    "qcom/opensource/dataipa:ipam",
+    "qcom/opensource/dataipa:ipanetm",
 ]
 
 def define_techpack_modules(target, msm_target, variant):
