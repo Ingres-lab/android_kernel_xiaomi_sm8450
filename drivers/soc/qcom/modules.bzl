@@ -2036,3 +2036,14 @@ def register_modules(registry):
             "drivers/soc/qcom/sps/sps_drv",
         ],
     )
+
+    # ingres: Snapdragon Sensor Core loader from the 6.6 tree, loaded on 6.6
+    registry.register(
+        name = "drivers/soc/qcom/sensors_ssc",
+        out = "sensors_ssc.ko",
+        config = "CONFIG_SENSORS_SSC",
+        srcs = [
+            # do not sort
+            "drivers/soc/qcom/sensors_ssc.c",
+        ],
+    )

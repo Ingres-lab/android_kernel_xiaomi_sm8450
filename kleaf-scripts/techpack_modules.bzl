@@ -37,6 +37,14 @@ _WAIPIO_TECHPACKS = [
     "qcom/opensource/dataipa:gsim",
     "qcom/opensource/dataipa:ipam",
     "qcom/opensource/dataipa:ipanetm",
+    "qcom/opensource/wlan/platform:cnss2",
+    "qcom/opensource/wlan/platform:cnss_plat_ipc_qmi_svc",
+    "qcom/opensource/wlan/platform:cnss_nl",
+    "qcom/opensource/wlan/platform:cnss_prealloc",
+    "qcom/opensource/wlan/platform:cnss_utils",
+    "qcom/opensource/wlan/platform:wlan_firmware_service",
+    "qcom/opensource/wlan/qcacld-3.0:qca_cld_qca6490",
+    "nxp/opensource/driver:nxp-nci",
 ]
 
 def define_techpack_modules(target, msm_target, variant):
