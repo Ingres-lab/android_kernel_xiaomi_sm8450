@@ -21,6 +21,9 @@ def define_techpack_modules(target, msm_target, variant):
     allow = _TECHPACK_ALLOWLIST.get(msm_target)
     if allow != None:
         techpack_targets = [t for t in techpack_targets if _allowed(t, allow)]
+    if msm_target == "waipio":
+        # ingres: aircrack-ng RTL8812AU USB Wi-Fi driver (88XXau.ko), loaded on 6.6
+        techpack_targets.append("//{}/rtl8812au:{}_88XXau".format(SOC_MODULES_REPO_PATH, target))
     return _define_dist(target, techpack_targets)
 
 def _all_techpack_targets(target):

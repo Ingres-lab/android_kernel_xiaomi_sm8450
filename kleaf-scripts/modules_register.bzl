@@ -73,6 +73,8 @@ def _generate_ddk_target(
         kconfigs = [":kconfig.msm.generated"],
         kernel_build = ":{}_base_kernel".format(target_variant),
         deps = ddk_config_deps,
+        # ingres: out-of-tree modules in sm8450-modules (rtl8812au) build with the vendor config
+        visibility = ["//vendor/xiaomi/sm8450-modules:__subpackages__"],
     )
 
     if config_path:
