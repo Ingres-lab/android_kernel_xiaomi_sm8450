@@ -2,28 +2,26 @@ load(":soc_repo_path.bzl", "SOC_MODULES_REPO_PATH")
 load("@rules_pkg//pkg:install.bzl", "pkg_install")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
-# Targets whose techpacks are brought up one subsystem at a time: only the listed
-# subsystems (directory under qcom/opensource or nxp/opensource, e.g. "graphics-kernel",
-# "wlan/platform") are built. Targets not listed here build every techpack.
-_TECHPACK_ALLOWLIST = {
-    # ingres (POCO F4 GT) on 6.12: first boot with core modules only
-    "waipio": [],
-}
-
-def _allowed(label, allow):
-    for subsystem in allow:
-        if "/opensource/{}:".format(subsystem) in label or "/opensource/{}/".format(subsystem) in label:
-            return True
-    return False
+# ingres (POCO F4 GT, waipio) on 6.12: an explicit list of the techpack targets that provide
+# the modules ingres loads on 6.6 (k612-tools/lsmod-6.6-ingres.txt). Entries are
+# "<path under sm8450-modules>:<target suffix>"; the label is //<repo>/<path>:waipio_perf_<suffix>.
+# Techpacks are added here as their waipio target is ported.
+_WAIPIO_TECHPACKS = [
+    # aircrack-ng RTL8812AU USB Wi-Fi driver (88XXau.ko)
+    "rtl8812au:88XXau",
+    "qcom/opensource/mmrm-driver:mmrm_driver",
+    "qcom/opensource/mm-drivers/msm_ext_display:msm_ext_display",
+    "qcom/opensource/synx-kernel/waipio:modules",
+]
 
 def define_techpack_modules(target, msm_target, variant):
-    techpack_targets = _all_techpack_targets(target)
-    allow = _TECHPACK_ALLOWLIST.get(msm_target)
-    if allow != None:
-        techpack_targets = [t for t in techpack_targets if _allowed(t, allow)]
     if msm_target == "waipio":
-        # ingres: aircrack-ng RTL8812AU USB Wi-Fi driver (88XXau.ko), loaded on 6.6
-        techpack_targets.append("//{}/rtl8812au:{}_88XXau".format(SOC_MODULES_REPO_PATH, target))
+        techpack_targets = []
+        for entry in _WAIPIO_TECHPACKS:
+            path, suffix = entry.split(":")
+            techpack_targets.append("//{}/{}:{}_{}".format(SOC_MODULES_REPO_PATH, path, target, suffix))
+    else:
+        techpack_targets = _all_techpack_targets(target)
     return _define_dist(target, techpack_targets)
 
 def _all_techpack_targets(target):
